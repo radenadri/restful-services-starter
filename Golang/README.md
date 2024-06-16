@@ -40,8 +40,6 @@ For any fiber go application, just clone the repo & rename the application name.
 
 - Visit **`http://localhost:9000`** or **`http://localhost:9000/api-docs`**
 
-![APIs](docs/api_list.png)
-
 ## 📦 Used packages
 
 | Name                                                                  | Version    | Type       |
