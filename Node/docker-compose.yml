@@ -1,0 +1,78 @@
+# specify the version of docker-compose
+version: "3.8"
+
+# define the services/containers to be run
+services:
+  # define the api service/container
+  api:
+    # api service depends on the db service so the db service will be started before the api service
+    depends_on:
+      - db
+
+    # specify the build context for the api service
+    build:
+      context: .
+      target: ${NODE_ENV}
+
+    # specify the ports to expose for the api service
+    # the first number is the port on the host machine
+    # the second number is the port inside the container
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+
+    env_file:
+      - .env
+
+    # specify environment variables for the api service
+    # for demo purposes, we're using a postgres database
+    environment:
+      NODE_ENV: ${NODE_ENV}
+
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+
+      APP_PORT: ${APP_PORT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+
+      ORIGIN: ${ORIGIN}
+
+    # specify the volumes to mount for the api service
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  # define the db service
+  db:
+    # specify the image for the db service
+    image: postgres
+
+    # specify the restart policy for the db service
+    restart: always
+
+    # specify the environment variables for the db service
+    env_file:
+      - .env
+
+    # specify the environment variables for the db service
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+      PGPORT: ${DB_PORT}
+
+    # specify the ports to expose for the db service
+    # the first number is the port on the host machine
+    # the second number is the port inside the container
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  # define the adminer service
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6969:6969
